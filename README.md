@@ -4,5 +4,10 @@ React + TypeScript + Vite application for CareFlow project.
 
 ## Documentation
 
-📋 [Project Initialization Documentation](docs/README.md)
+📋 [Project Initialization Documentation](docs/Initialization-Documentation.md)
+
+📋 [Development Environment Documentation](docs/development-environment.md)
+
+
+
 
