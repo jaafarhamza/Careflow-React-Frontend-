@@ -8,6 +8,8 @@ React + TypeScript + Vite application for CareFlow project.
 
 📋 [Development Environment Documentation](docs/development-environment.md)
 
+📋 [State Management Documentation](docs/state-management.md)
+
 
 
 
