@@ -4,7 +4,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 interface AuthState {
   isAuthenticated: boolean
   token: string | null
-  user: { id: string; name: string; email: string } | null
+  user: { id: string; name: string; email: string; role?: string } | null
 }
 
 const initialState: AuthState = {
