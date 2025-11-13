@@ -11,3 +11,5 @@ React + TypeScript + Vite application for CareFlow project.
 📋 [State Management Documentation](docs/state-management.md)
 
 📋 [Routing System Documentation](docs/routing-system.md)
+
+📋 [API Client Documentation](docs/api-client.md)
