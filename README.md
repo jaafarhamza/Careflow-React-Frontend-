@@ -17,3 +17,5 @@ React + TypeScript + Vite application for CareFlow project.
 📋 [Theme Configuration Documentation](docs/theme-configuration.md)
 
 📋 [Form Management Documentation](docs/form-management.md)
+
+📋 [Testing Documentation](docs/testing.md)
