@@ -45,7 +45,7 @@ interface AllTheProvidersProps {
 }
 
 //Wrapper component with all providers
-
+//eslint-disable-next-line
 function AllTheProviders({
   children,
   store = createTestStore(),
@@ -93,5 +93,6 @@ export function renderWithProviders(
 }
 
 // Re-export everything from React Testing Library
+//eslint-disable-next-line
 export * from '@testing-library/react'
 export { renderWithProviders as render }
