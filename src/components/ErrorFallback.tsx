@@ -1,0 +1,111 @@
+interface ErrorFallbackProps {
+  error: Error | null
+  resetError: () => void
+}
+
+export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
+  const isDevelopment = import.meta.env.MODE === 'development'
+
+  const handleReload = () => {
+    window.location.reload()
+  }
+
+  const handleGoHome = () => {
+    window.location.href = '/'
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="max-w-md w-full bg-card rounded-lg shadow-lg p-8 text-center">
+        {/* Error Icon */}
+        <div className="mb-6">
+          <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-destructive"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Error Title */}
+        <h1 className="text-2xl font-bold text-foreground mb-2">
+          Oops! Something went wrong
+        </h1>
+
+        {/* Error Description */}
+        <p className="text-muted-foreground mb-6">
+          We're sorry for the inconvenience. An unexpected error has occurred.
+          Our team has been notified and is working on a fix.
+        </p>
+
+        {/* Error Details (Development Only) */}
+        {isDevelopment && error && (
+          <div className="mb-6 p-4 bg-destructive/10 rounded-md text-left">
+            <p className="text-sm font-semibold text-destructive mb-2">
+              Error Details (Development Only):
+            </p>
+            <p className="text-xs text-destructive/80 font-mono break-all">
+              {error.message}
+            </p>
+            {error.stack && (
+              <details className="mt-2">
+                <summary className="text-xs text-destructive/80 cursor-pointer">
+                  Stack Trace
+                </summary>
+                <pre className="text-xs text-destructive/70 mt-2 overflow-auto max-h-40">
+                  {error.stack}
+                </pre>
+              </details>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <button
+            onClick={resetError}
+            className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-md font-medium hover:bg-primary/90 transition-colors"
+          >
+            Try Again
+          </button>
+
+          <button
+            onClick={handleReload}
+            className="w-full bg-secondary text-secondary-foreground py-3 px-4 rounded-md font-medium hover:bg-secondary/90 transition-colors"
+          >
+            Reload Page
+          </button>
+
+          <button
+            onClick={handleGoHome}
+            className="w-full border border-border text-foreground py-3 px-4 rounded-md font-medium hover:bg-accent transition-colors"
+          >
+            Go to Homepage
+          </button>
+        </div>
+
+        {/* Support Information */}
+        <div className="mt-6 pt-6 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            Need help?{' '}
+            <a
+              href="mailto:support@careflow.app"
+              className="text-primary hover:underline"
+            >
+              Contact Support
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}

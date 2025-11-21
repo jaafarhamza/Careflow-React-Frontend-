@@ -6,6 +6,7 @@ import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { NotFound } from '@/pages/NotFound'
+import { SentryTest } from '@/components/SentryTest'
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,11 @@ export const router = createBrowserRouter([
         <div>Admin Page</div>
       </RoleBasedRoute>
     ),
+  },
+  // Sentry Test Page
+  {
+    path: '/sentry-test',
+    element: <SentryTest />,
   },
   {
     path: ROUTES.NOT_FOUND,

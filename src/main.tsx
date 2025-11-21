@@ -7,20 +7,27 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from './theme'
 import { store, persistor } from './store'
 import { queryClient } from './services/queryClient'
+import { initSentry } from './config/sentry.config'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import './index.css'
 import App from './App.tsx'
 
+// Initialize Sentry before rendering
+initSentry()
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <App />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </PersistGate>
-    </Provider>
-  </StrictMode>,
+    <ErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <App />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
+  </StrictMode>
 )
