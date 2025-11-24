@@ -1,3 +1,5 @@
 export { DataTable, type DataTableProps } from './DataTable'
-export { default as Sidebar, type NavItem } from './Sidebar'
+export { default as Sidebar } from './Sidebar'
 export { default as Header } from './Header'
+export { default as Navigation } from './Navigation'
+export { type NavItem } from '@/config/navigation.config'

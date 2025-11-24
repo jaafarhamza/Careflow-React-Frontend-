@@ -12,21 +12,7 @@ describe('Sidebar', () => {
     renderWithRouter(<Sidebar role="admin" open={true} onClose={() => {}} />)
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
     expect(screen.getByText('Patients')).toBeInTheDocument()
-    expect(screen.getByText('Settings')).toBeInTheDocument()
-  })
-
-  it('filters navigation by role - doctor', () => {
-    renderWithRouter(<Sidebar role="doctor" open={true} onClose={() => {}} />)
-    expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.getByText('Patients')).toBeInTheDocument()
-    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
-  })
-
-  it('filters navigation by role - user', () => {
-    renderWithRouter(<Sidebar role="user" open={true} onClose={() => {}} />)
-    expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.queryByText('Patients')).not.toBeInTheDocument()
-    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+    expect(screen.getByText('Messages')).toBeInTheDocument()
   })
 
   it('applies open class when open prop is true', () => {
@@ -51,5 +37,12 @@ describe('Sidebar', () => {
     const closeButton = screen.getByLabelText('Close sidebar')
     fireEvent.click(closeButton)
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('passes role to Navigation component', () => {
+    renderWithRouter(<Sidebar role="doctor" open={true} onClose={() => {}} />)
+    // Doctor should see Patients but not Administration
+    expect(screen.getByText('Patients')).toBeInTheDocument()
+    expect(screen.queryByText('Administration')).not.toBeInTheDocument()
   })
 })
