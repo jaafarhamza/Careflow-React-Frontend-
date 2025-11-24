@@ -62,46 +62,6 @@ export interface ModalProps extends ModalVariants {
   overlayClassName?: string
 }
 
-/**
- * Modal Component
- *
- * A fully accessible modal dialog with:
- * - Overlay with backdrop
- * - Close button
- * - Close on overlay click (configurable)
- * - Close on ESC key (configurable)
- * - Size variants (sm, md, lg, xl, 2xl, 3xl, 4xl, full)
- * - Focus trap (automatic)
- * - ARIA attributes (automatic)
- * - Smooth animations
- *
- * Built on top of Radix UI Dialog for maximum accessibility
- *
- * @example
- * ```tsx
- * const [open, setOpen] = useState(false)
- *
- * <Modal
- *   open={open}
- *   onClose={() => setOpen(false)}
- *   title="Confirm Action"
- *   description="Are you sure you want to proceed?"
- *   size="md"
- *   footer={
- *     <>
- *       <Button variant="outline" onClick={() => setOpen(false)}>
- *         Cancel
- *       </Button>
- *       <Button onClick={handleConfirm}>
- *         Confirm
- *       </Button>
- *     </>
- *   }
- * >
- *   <p>This action cannot be undone.</p>
- * </Modal>
- * ```
- */
 export function Modal({
   open,
   onClose,
