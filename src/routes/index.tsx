@@ -7,6 +7,7 @@ import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { NotFound } from '@/pages/NotFound'
 import { SentryTest } from '@/components/SentryTest'
+import AuthLayout from '@/layouts/AuthLayout'
 
 export const router = createBrowserRouter([
   {
@@ -14,8 +15,17 @@ export const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: ROUTES.LOGIN,
-    element: <Login />,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: ROUTES.LOGIN,
+        element: <Login />,
+      },
+      {
+        path: ROUTES.REGISTER,
+        element: <div>Register Page</div>, // Placeholder for now
+      },
+    ],
   },
   {
     path: ROUTES.DASHBOARD,

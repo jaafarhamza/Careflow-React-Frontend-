@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 
-interface UserDropdownProps {
+export interface UserDropdownProps {
   user?: {
     name: string
     email: string
@@ -17,9 +17,24 @@ interface UserDropdownProps {
     role?: string
   }
   onLogout?: () => void
+  onProfileClick?: () => void
+  onSettingsClick?: () => void
+  onHelpClick?: () => void
+  showUserInfo?: boolean
+  showName?: boolean
+  showHelp?: boolean
 }
 
-export default function UserDropdown({ user, onLogout }: UserDropdownProps) {
+export default function UserDropdown({
+  user,
+  onLogout,
+  onProfileClick,
+  onSettingsClick,
+  onHelpClick,
+  showUserInfo = true,
+  showName = true,
+  showHelp = true,
+}: UserDropdownProps) {
   const defaultUser = {
     name: user?.name || 'Guest User',
     email: user?.email || 'guest@example.com',
@@ -42,6 +57,24 @@ export default function UserDropdown({ user, onLogout }: UserDropdownProps) {
     }
   }
 
+  const handleProfileClick = () => {
+    if (onProfileClick) {
+      onProfileClick()
+    }
+  }
+
+  const handleSettingsClick = () => {
+    if (onSettingsClick) {
+      onSettingsClick()
+    }
+  }
+
+  const handleHelpClick = () => {
+    if (onHelpClick) {
+      onHelpClick()
+    }
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -55,40 +88,48 @@ export default function UserDropdown({ user, onLogout }: UserDropdownProps) {
             )}
             <AvatarFallback>{getInitials(defaultUser.name)}</AvatarFallback>
           </Avatar>
-          <span className="hidden md:inline-block text-sm font-medium">
-            {defaultUser.name}
-          </span>
+          {showName && (
+            <span className="hidden md:inline-block text-sm font-medium">
+              {defaultUser.name}
+            </span>
+          )}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {defaultUser.name}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {defaultUser.email}
-            </p>
-            {defaultUser.role && (
-              <p className="text-xs leading-none text-muted-foreground">
-                Role: {defaultUser.role}
-              </p>
-            )}
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        {showUserInfo && (
+          <>
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">
+                  {defaultUser.name}
+                </p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {defaultUser.email}
+                </p>
+                {defaultUser.role && (
+                  <p className="text-xs leading-none text-muted-foreground">
+                    Role: {defaultUser.role}
+                  </p>
+                )}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+          </>
+        )}
+        <DropdownMenuItem onClick={handleProfileClick}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSettingsClick}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <HelpCircle className="mr-2 h-4 w-4" />
-          <span>Help & Support</span>
-        </DropdownMenuItem>
+        {showHelp && (
+          <DropdownMenuItem onClick={handleHelpClick}>
+            <HelpCircle className="mr-2 h-4 w-4" />
+            <span>Help & Support</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}

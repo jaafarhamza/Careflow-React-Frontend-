@@ -1,5 +1,8 @@
 export { Button } from './button'
 export { buttonVariants } from './button.variants'
+export { Badge, badgeVariants, type BadgeProps } from './badge'
+export { Avatar, AvatarImage, AvatarFallback } from './avatar'
+export { Skeleton, type SkeletonProps } from './skeleton'
 export { Input, type InputProps } from './input'
 export { inputVariants, type InputVariants } from './input.variants'
 export { Textarea, type TextareaProps } from './textarea'

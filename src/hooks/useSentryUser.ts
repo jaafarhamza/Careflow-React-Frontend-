@@ -3,20 +3,19 @@ import { useAppSelector } from './redux'
 import { setUserContext, clearUserContext } from '@/config/sentry.config'
 
 export function useSentryUser() {
-    const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+    const { isAuthenticated } = useAppSelector((state) => state.auth)
+    const { profile } = useAppSelector((state) => state.user)
 
     useEffect(() => {
-        if (isAuthenticated && user) {
-            // Set user context in Sentry
+        if (isAuthenticated && profile) {
             setUserContext({
-                id: user.id,
-                username: user.name,
-                role: user.role,
-                email: user.email,
+                id: profile.id,
+                email: profile.email,
+                username: profile.name,
+                role: profile.role,
             })
         } else {
-            // Clear user context on logout
             clearUserContext()
         }
-    }, [isAuthenticated, user])
+    }, [isAuthenticated, profile])
 }

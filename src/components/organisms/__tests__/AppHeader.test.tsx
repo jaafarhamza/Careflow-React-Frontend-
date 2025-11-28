@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import AppHeader from '../AppHeader'
 
@@ -13,7 +13,9 @@ describe('AppHeader', () => {
   })
 
   it('renders logo when provided', () => {
-    render(<AppHeader {...defaultProps} logoUrl="/logo.png" appName="Test App" />)
+    render(
+      <AppHeader {...defaultProps} logoUrl="/logo.png" appName="Test App" />
+    )
     const logo = screen.getByAltText('Test App')
     expect(logo).toBeInTheDocument()
     expect(logo).toHaveAttribute('src', '/logo.png')
@@ -35,31 +37,31 @@ describe('AppHeader', () => {
   it('calls onSearch when form is submitted', () => {
     const onSearch = vi.fn()
     render(<AppHeader {...defaultProps} onSearch={onSearch} />)
-    
+
     const searchInput = screen.getByPlaceholderText(/search patients/i)
     fireEvent.change(searchInput, { target: { value: 'test query' } })
     fireEvent.submit(searchInput.closest('form')!)
-    
+
     expect(onSearch).toHaveBeenCalledWith('test query')
   })
 
   it('does not call onSearch with empty query', () => {
     const onSearch = vi.fn()
     render(<AppHeader {...defaultProps} onSearch={onSearch} />)
-    
+
     const searchInput = screen.getByPlaceholderText(/search patients/i)
     fireEvent.submit(searchInput.closest('form')!)
-    
+
     expect(onSearch).not.toHaveBeenCalled()
   })
 
   it('calls onMenuClick when menu button is clicked', () => {
     const onMenuClick = vi.fn()
     render(<AppHeader {...defaultProps} onMenuClick={onMenuClick} />)
-    
+
     const menuButton = screen.getByLabelText('Open sidebar')
     fireEvent.click(menuButton)
-    
+
     expect(onMenuClick).toHaveBeenCalledTimes(1)
   })
 
@@ -70,7 +72,7 @@ describe('AppHeader', () => {
       role: 'Doctor',
     }
     render(<AppHeader {...defaultProps} user={user} />)
-    
+
     expect(screen.getByText('John Doe')).toBeInTheDocument()
   })
 

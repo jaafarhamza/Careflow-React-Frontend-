@@ -7,14 +7,18 @@ interface RoleBasedRouteProps {
   allowedRoles: string[]
 }
 
-export const RoleBasedRoute = ({ children, allowedRoles }: RoleBasedRouteProps) => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+export const RoleBasedRoute = ({
+  children,
+  allowedRoles,
+}: RoleBasedRouteProps) => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth)
+  const { profile } = useAppSelector((state) => state.user)
 
   if (!isAuthenticated) {
     return <Navigate to={ROUTES.LOGIN} replace />
   }
 
-  const userRole = user?.role || 'user'
+  const userRole = profile?.role || 'user'
 
   if (!allowedRoles.includes(userRole)) {
     return <Navigate to={ROUTES.DASHBOARD} replace />

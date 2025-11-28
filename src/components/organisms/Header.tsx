@@ -1,5 +1,5 @@
 import { Bell, Menu } from 'lucide-react'
-import UserMenu from '@/components/molecules/UserMenu'
+import UserDropdown from '@/components/molecules/UserDropdown'
 import Breadcrumb from '@/components/molecules/Breadcrumb'
 
 interface HeaderProps {
@@ -32,7 +32,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
         >
           <Bell className="h-5 w-5" />
         </button>
-        <UserMenu />
+        <UserDropdown showUserInfo={false} showHelp={false} />
       </div>
     </header>
   )
