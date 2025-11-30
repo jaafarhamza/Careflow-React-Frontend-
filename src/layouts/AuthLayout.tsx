@@ -3,16 +3,16 @@ import { HeartPulse } from 'lucide-react'
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8">
+    <div className="w-full flex flex-col items-center justify-center dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8">
 
       <div className="w-full max-w-md space-y-8">
         {/* Logo Section */}
         <div className="flex flex-col items-center text-center">
           <Link
             to="/"
-            className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity"
+            className="flex flex-col items-center text-primary hover:opacity-80 transition-opacity"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">
               <HeartPulse className="h-6 w-6" />
             </div>
             <span className="text-2xl font-bold tracking-tight">CareFlow</span>
@@ -20,9 +20,6 @@ export default function AuthLayout() {
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
             Welcome back
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Secure access for healthcare professionals
-          </p>
         </div>
 
         {/* Main Card */}

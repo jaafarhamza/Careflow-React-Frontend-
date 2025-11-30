@@ -2,7 +2,8 @@ import axios from 'axios'
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import type { ApiError } from '@/types/api'
 
-const baseURL = import.meta.env.VITE_API_BASE_URL
+// Use relative path in development to leverage Vite proxy
+const baseURL = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_BASE_URL
 const timeout = Number(import.meta.env.VITE_API_TIMEOUT)
 
 export const apiClient = axios.create({
