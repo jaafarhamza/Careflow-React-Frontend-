@@ -4,6 +4,7 @@ import { RoleBasedRoute } from './RoleBasedRoute'
 import { ROUTES } from '@/constants/routes'
 import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
+import { Register } from '@/pages/Register'
 import { Dashboard } from '@/pages/Dashboard'
 import { NotFound } from '@/pages/NotFound'
 import { SentryTest } from '@/components/SentryTest'
@@ -23,7 +24,7 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.REGISTER,
-        element: <div>Register Page</div>, // Placeholder for now
+        element: <Register />,
       },
     ],
   },

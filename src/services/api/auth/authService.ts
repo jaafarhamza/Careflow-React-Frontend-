@@ -6,6 +6,13 @@ interface LoginRequest {
   password: string
 }
 
+interface RegisterRequest {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+}
+
 interface LoginResponse {
   token: string
   refreshToken: string
@@ -22,6 +29,14 @@ export const authService = {
     const { data } = await apiClient.post<ApiResponse<LoginResponse>>(
       '/auth/login',
       credentials
+    )
+    return data
+  },
+
+  register: async (userData: RegisterRequest) => {
+    const { data } = await apiClient.post<ApiResponse<LoginResponse>>(
+      '/auth/register',
+      userData
     )
     return data
   },
