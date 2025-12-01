@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Loader2, UserPlus } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react'
 import { useFormWithValidation } from '@/hooks/useFormWithValidation'
 import {
-  registerSchema,
-  type RegisterFormData,
+  resetPasswordSchema,
+  type ResetPasswordFormData,
 } from '@/utils/validation/schemas/auth.schema'
-import { useAuth } from '@/hooks/useAuth'
 import { authService } from '@/services/api/auth/authService'
 import { useToast } from '@/hooks/useToast'
 import { ROUTES } from '@/constants/routes'
@@ -17,7 +16,6 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -25,10 +23,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form'
 
-export default function RegisterForm() {
+export const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -37,17 +34,23 @@ export default function RegisterForm() {
   )
 
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const location = useLocation()
   const { addToast } = useToast()
 
+  const email = location.state?.email
+  const code = location.state?.code
+
+  useEffect(() => {
+    if (!email || !code) {
+      navigate('/forgot-password')
+    }
+  }, [email, code, navigate])
+
   const form = useFormWithValidation({
-    schema: registerSchema,
+    schema: resetPasswordSchema,
     defaultValues: {
-      name: '',
-      email: '',
       password: '',
       confirmPassword: '',
-      acceptTerms: false,
     },
   })
 
@@ -57,42 +60,25 @@ export default function RegisterForm() {
     setPasswordStrength(calculatePasswordStrength(password))
   }, [password])
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true)
     try {
-      // Split full name into first and last name
-      const nameParts = data.name.trim().split(' ')
-      const firstName = nameParts[0] || ''
-      const lastName = nameParts.slice(1).join(' ') || nameParts[0] || ''
-
-      const response = await authService.register({
-        firstName,
-        lastName,
-        email: data.email,
-        password: data.password,
-      })
-
-      // Auto-login after successful registration
-      login({
-        token: response.data.token,
-        refreshToken: response.data.refreshToken,
-        user: response.data.user,
-      })
+      await authService.resetPassword(code, data.password, data.confirmPassword)
 
       addToast({
-        title: 'Welcome to CareFlow!',
-        message: 'Your account has been created successfully.',
+        title: 'Password reset successful',
+        message: 'You can now sign in with your new password',
         type: 'success',
       })
 
-      navigate(ROUTES.DASHBOARD, { replace: true })
+      setTimeout(() => {
+        navigate(ROUTES.LOGIN)
+      }, 2000)
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Registration failed. Please try again.'
+        error instanceof Error ? error.message : 'Failed to reset password'
       addToast({
-        title: 'Registration failed',
+        title: 'Error',
         message: errorMessage,
         type: 'error',
       })
@@ -102,46 +88,27 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="w-full">
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Reset your password
+        </h1>
+        <p className="text-sm text-muted-foreground mt-2">
+          Enter your new password below
+        </p>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Your Name"
-                    autoComplete="name"
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="name@example.com"
-                    type="email"
-                    autoComplete="email"
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <input
+            type="email"
+            name="username"
+            value={email || ''}
+            autoComplete="username"
+            readOnly
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
           />
 
           <FormField
@@ -149,7 +116,7 @@ export default function RegisterForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>New Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -250,63 +217,25 @@ export default function RegisterForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="acceptTerms"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>
-                    <Link to="/terms" className="text-primary hover:underline">
-                      Terms and Conditions
-                    </Link>
-                    {' and '}
-                    <Link
-                      to="/privacy"
-                      className="text-primary hover:underline"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </FormLabel>
-                  <FormDescription>
-                    You agree to our Terms of Service and Privacy Policy.
-                  </FormDescription>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <Button className="w-full cursor-pointer" type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="w-full cursor-pointer">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
+                Resetting password...
               </>
             ) : (
               <>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Create Account
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Reset Password
               </>
             )}
           </Button>
         </form>
       </Form>
 
-      <div className="text-center text-sm">
-        Already have an account?{' '}
-        <Link
-          to={ROUTES.LOGIN}
-          className="font-medium text-primary hover:underline"
-        >
-          Sign in
+      <div className="mt-6 text-center text-sm">
+        <Link to={ROUTES.LOGIN} className="text-primary hover:underline">
+          Back to login
         </Link>
       </div>
     </div>

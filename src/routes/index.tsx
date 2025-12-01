@@ -5,6 +5,9 @@ import { ROUTES } from '@/constants/routes'
 import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
+import { ForgotPassword } from '@/pages/ForgotPassword'
+import { VerifyResetCode } from '@/pages/VerifyResetCode'
+import { ResetPassword } from '@/pages/ResetPassword'
 import { Dashboard } from '@/pages/Dashboard'
 import { NotFound } from '@/pages/NotFound'
 import { SentryTest } from '@/components/SentryTest'
@@ -25,6 +28,18 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.REGISTER,
         element: <Register />,
+      },
+      {
+        path: '/forgot-password',
+        element: <ForgotPassword />,
+      },
+      {
+        path: '/verify-reset-code',
+        element: <VerifyResetCode />,
+      },
+      {
+        path: '/reset-password',
+        element: <ResetPassword />,
       },
     ],
   },

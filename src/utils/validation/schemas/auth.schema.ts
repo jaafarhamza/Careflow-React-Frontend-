@@ -39,7 +39,6 @@ export const resetPasswordSchema = z
     .object({
         password: passwordSchema,
         confirmPassword: z.string().min(1, 'Please confirm your password'),
-        token: z.string().min(1, 'Reset token is required'),
     })
     .refine(confirmPasswordRefine, confirmPasswordMessage)
 

@@ -53,4 +53,28 @@ export const authService = {
     )
     return data
   },
+
+  requestPasswordReset: async (email: string) => {
+    const { data } = await apiClient.post<ApiResponse<{ message: string }>>(
+      '/auth/password/request',
+      { email }
+    )
+    return data
+  },
+
+  verifyResetCode: async (email: string, code: string) => {
+    const { data } = await apiClient.post<ApiResponse<{ valid: boolean }>>(
+      '/auth/password/verify',
+      { email, code }
+    )
+    return data
+  },
+
+  resetPassword: async (code: string, newPassword: string, confirmPassword: string) => {
+    const { data } = await apiClient.post<ApiResponse<{ message: string }>>(
+      '/auth/password/reset',
+      { code, newPassword, confirmPassword }
+    )
+    return data
+  },
 }
