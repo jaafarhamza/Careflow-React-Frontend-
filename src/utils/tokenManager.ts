@@ -19,14 +19,12 @@ const REFRESH_TOKEN_KEY = 'refreshToken'
 // Decode JWT token to extract payload
 export function decodeToken(token: string): { exp?: number; iat?: number } {
     if (!token) {
-        console.warn('decodeToken: token is null or undefined')
         return {}
     }
 
     try {
         const base64Url = token.split('.')[1]
         if (!base64Url) {
-            console.warn('decodeToken: invalid token format')
             return {}
         }
 
@@ -38,8 +36,7 @@ export function decodeToken(token: string): { exp?: number; iat?: number } {
                 .join('')
         )
         return JSON.parse(jsonPayload)
-    } catch (error) {
-        console.error('Error decoding token:', error)
+    } catch {
         return {}
     }
 }
@@ -72,14 +69,7 @@ export function getRefreshToken(): string | null {
 
 // Set tokens in storage
 export function setTokens(tokenData: TokenData): void {
-    console.log('setTokens called with:', {
-        hasAccessToken: !!tokenData.accessToken,
-        hasRefreshToken: !!tokenData.refreshToken,
-        tokenData
-    })
-
     if (!tokenData.accessToken) {
-        console.error('setTokens: accessToken is undefined or null!', tokenData)
         return
     }
 
@@ -102,7 +92,6 @@ export function clearTokens(): void {
 // Refreshes 1 minute (60 seconds) before token expires
 export function scheduleTokenRefresh(token: string): void {
     if (!token) {
-        console.warn('scheduleTokenRefresh: token is null or undefined')
         return
     }
 
@@ -111,7 +100,6 @@ export function scheduleTokenRefresh(token: string): void {
 
     const expirationTime = getTokenExpirationTime(token)
     if (!expirationTime) {
-        console.warn('Cannot schedule refresh: token has no expiration')
         return
     }
 
@@ -122,17 +110,12 @@ export function scheduleTokenRefresh(token: string): void {
     const timeUntilRefresh = timeUntilExpiration - refreshBuffer
 
     if (timeUntilRefresh <= 0) {
-        console.warn('Token expired or expiring soon')
         return
     }
 
-    console.log(
-        `Token refresh scheduled in ${Math.floor(timeUntilRefresh / 1000 / 60)} minutes`
-    )
-
     // Schedule the refresh - will be handled by API client interceptor
     refreshTimer = setTimeout(() => {
-        console.log('Token refresh scheduled - will trigger on next API call')
+        // Token refresh will trigger on next API call
     }, timeUntilRefresh) as unknown as number
 }
 

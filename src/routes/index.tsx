@@ -13,6 +13,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { NotFound } from '@/pages/NotFound'
 import { SentryTest } from '@/components/SentryTest'
 import AuthLayout from '@/layouts/AuthLayout'
+import { OAuthCallback } from '@/pages/OAuthCallback'
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,11 @@ export const router = createBrowserRouter([
         element: <ResetPassword />,
       },
     ],
+  },
+  {
+    path: ROUTES.OAUTH_CALLBACK,
+    element: <OAuthCallback />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: ROUTES.DASHBOARD,

@@ -6,6 +6,7 @@ export const ROUTES = {
   PROFILE: '/profile',
   SETTINGS: '/settings',
   ADMIN: '/admin',
+  OAUTH_CALLBACK: '/auth/callback',
   NOT_FOUND: '/404',
 } as const
 
