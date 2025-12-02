@@ -8,12 +8,16 @@ import { ThemeProvider } from './theme'
 import { store, persistor } from './store'
 import { queryClient } from './services/queryClient'
 import { initSentry } from './config/sentry.config'
+import { initializeTokenManagement } from './utils/tokenManager'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import './index.css'
 import App from './App.tsx'
 
 // Initialize Sentry before rendering
 initSentry()
+
+// Initialize token management
+initializeTokenManagement()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -3,7 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface UserProfile {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   avatar?: string
   role?: string

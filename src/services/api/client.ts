@@ -1,6 +1,12 @@
 import axios from 'axios'
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import type { ApiError } from '@/types/api'
+import {
+  getAccessToken,
+  clearTokens,
+  scheduleTokenRefresh,
+} from '@/utils/tokenManager'
+import { authService } from './auth/authService'
 
 // Use relative path in development to leverage Vite proxy
 const baseURL = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_BASE_URL
@@ -31,9 +37,10 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = []
 }
 
+// Request interceptor - Add access token to requests
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token')
+    const token = getAccessToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -42,6 +49,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
+// Response interceptor - Handle 401 errors and refresh token
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -49,7 +57,9 @@ apiClient.interceptors.response.use(
       _retry?: boolean
     }
 
+    // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // If already refreshing, queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -68,24 +78,42 @@ apiClient.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refreshToken')
-        const { data } = await axios.post(`${baseURL}/auth/refresh`, {
-          refreshToken,
-        })
+        if (!refreshToken) {
+          throw new Error('No refresh token available')
+        }
 
-        const newToken = data.token
-        localStorage.setItem('token', newToken)
+        // Call refresh endpoint
+        const { data } = await authService.refreshToken(refreshToken)
+        const newToken = data.accessToken || data.token || ''
+        
+        if (!newToken) {
+          throw new Error('No token returned from refresh endpoint')
+        }
 
+        // Update token in storage
+        localStorage.setItem('accessToken', newToken)
+
+        // Schedule next automatic refresh
+        scheduleTokenRefresh(newToken)
+
+        // Process queued requests with new token
         processQueue(null, newToken)
 
+        // Retry original request with new token
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newToken}`
         }
 
         return apiClient(originalRequest)
       } catch (refreshError) {
+        // Refresh failed - clear tokens and redirect to login
         processQueue(refreshError, null)
-        localStorage.removeItem('token')
-        localStorage.removeItem('refreshToken')
+        clearTokens()
+
+        // Clear Redux state
+        window.dispatchEvent(new Event('auth:logout'))
+
+        // Redirect to login
         window.location.href = '/login'
         return Promise.reject(refreshError)
       } finally {
@@ -93,6 +121,7 @@ apiClient.interceptors.response.use(
       }
     }
 
+    // Transform error to ApiError format
     const apiError: ApiError = {
       message:
         (error.response?.data as { message?: string })?.message ||

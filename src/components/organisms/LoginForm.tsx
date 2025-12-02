@@ -52,9 +52,13 @@ export default function LoginForm() {
         password: data.password,
       })
 
+      const accessToken = response.data.accessToken || response.data.token || ''
+
+      console.log('Login successful, accessToken:', accessToken ? 'Present' : 'Missing')
+
       login({
-        token: response.data.token,
-        refreshToken: response.data.refreshToken,
+        accessToken,
+        refreshToken: response.data.refreshToken || '',
         user: response.data.user,
       })
 
@@ -65,11 +69,19 @@ export default function LoginForm() {
       })
 
       navigate(from, { replace: true })
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Invalid email or password'
+    } catch (error: unknown) {
+      let errorMessage = 'Invalid email or password'
+      let errorTitle = 'Login failed'
+
+      if (error && typeof error === 'object' && 'status' in error && error.status === 429) {
+        errorTitle = 'Too Many Requests'
+        errorMessage = 'You have made too many login attempts. Please try again later.'
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
       addToast({
-        title: 'Login failed',
+        title: errorTitle,
         message: errorMessage,
         type: 'error',
       })
@@ -169,7 +181,11 @@ export default function LoginForm() {
             </Link>
           </div>
 
-          <Button className="w-full cursor-pointer" type="submit" disabled={isLoading}>
+          <Button
+            className="w-full cursor-pointer"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

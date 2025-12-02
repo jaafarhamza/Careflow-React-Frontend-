@@ -12,11 +12,12 @@ export const handlers = [
             return HttpResponse.json({
                 success: true,
                 data: {
-                    token: 'mock-jwt-token',
+                    accessToken: 'mock-jwt-token',
                     refreshToken: 'mock-refresh-token',
                     user: {
                         id: '1',
-                        name: 'Test User',
+                        firstName: 'Test',
+                        lastName: 'User',
                         email: 'test@example.com',
                         role: 'user',
                     },
@@ -45,22 +46,23 @@ export const handlers = [
         return HttpResponse.json({
             success: true,
             data: {
-                token: 'new-mock-jwt-token',
+                accessToken: 'new-mock-jwt-token',
             },
         })
     }),
 
     http.post(`${API_URL}/auth/register`, async ({ request }) => {
-        const body = await request.json() as { name: string; email: string; password: string }
+        const body = await request.json() as { firstName: string; lastName: string; email: string; password: string }
 
         return HttpResponse.json({
             success: true,
             data: {
-                token: 'mock-jwt-token',
+                accessToken: 'mock-jwt-token',
                 refreshToken: 'mock-refresh-token',
                 user: {
                     id: '2',
-                    name: body.name,
+                    firstName: body.firstName || 'Test',
+                    lastName: body.lastName || 'User',
                     email: body.email,
                     role: 'user',
                 },
@@ -74,7 +76,8 @@ export const handlers = [
             success: true,
             data: {
                 id: '1',
-                name: 'Test User',
+                firstName: 'Test',
+                lastName: 'User',
                 email: 'test@example.com',
                 role: 'user',
                 avatar: null,

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleBasedRoute } from './RoleBasedRoute'
+import { RouteErrorBoundary } from '@/components/RouteErrorBoundary'
 import { ROUTES } from '@/constants/routes'
 import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
@@ -17,9 +18,11 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.HOME,
     element: <Home />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     element: <AuthLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: ROUTES.LOGIN,
@@ -50,6 +53,7 @@ export const router = createBrowserRouter([
         <Dashboard />
       </ProtectedRoute>
     ),
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: ROUTES.ADMIN,
@@ -58,11 +62,12 @@ export const router = createBrowserRouter([
         <div>Admin Page</div>
       </RoleBasedRoute>
     ),
+    errorElement: <RouteErrorBoundary />,
   },
-  // Sentry Test Page
   {
     path: '/sentry-test',
     element: <SentryTest />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: ROUTES.NOT_FOUND,

@@ -2,7 +2,6 @@ import { z } from 'zod'
 import {
     emailSchema,
     passwordSchema,
-    nameSchema,
     confirmPasswordRefine,
     confirmPasswordMessage,
 } from './base.schema'
@@ -17,7 +16,7 @@ export type LoginFormData = z.infer<typeof loginSchema>
 
 export const registerSchema = z
     .object({
-        name: nameSchema,
+        name: z.string().min(2, 'Full name must be at least 2 characters'),
         email: emailSchema,
         password: passwordSchema,
         confirmPassword: z.string().min(1, 'Please confirm your password'),

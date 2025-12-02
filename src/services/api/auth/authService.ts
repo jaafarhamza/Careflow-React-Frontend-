@@ -14,14 +14,21 @@ interface RegisterRequest {
 }
 
 interface LoginResponse {
-  token: string
+  token?: string
+  accessToken?: string
   refreshToken: string
   user: {
     id: string
-    name: string
+    firstName: string
+    lastName: string
     email: string
     role?: string
   }
+}
+
+interface RefreshTokenResponse {
+  token?: string
+  accessToken?: string
 }
 
 export const authService = {
@@ -42,12 +49,18 @@ export const authService = {
   },
 
   logout: async () => {
-    const { data } = await apiClient.post<ApiResponse<void>>('/auth/logout')
-    return data
+    try {
+      const { data } = await apiClient.post<ApiResponse<void>>('/auth/logout')
+      return data
+    } catch (error) {
+      // Even if logout fails on backend, we should clear local tokens
+      console.error('Logout error:', error)
+      throw error
+    }
   },
 
   refreshToken: async (refreshToken: string) => {
-    const { data } = await apiClient.post<ApiResponse<{ token: string }>>(
+    const { data } = await apiClient.post<ApiResponse<RefreshTokenResponse>>(
       '/auth/refresh',
       { refreshToken }
     )

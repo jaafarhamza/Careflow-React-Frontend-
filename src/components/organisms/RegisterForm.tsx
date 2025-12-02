@@ -65,34 +65,59 @@ export default function RegisterForm() {
       const firstName = nameParts[0] || ''
       const lastName = nameParts.slice(1).join(' ') || nameParts[0] || ''
 
-      const response = await authService.register({
+      // Register the user
+      await authService.register({
         firstName,
         lastName,
         email: data.email,
         password: data.password,
       })
 
-      // Auto-login after successful registration
+      // Login after successful registration
+      const loginResponse = await authService.login({
+        email: data.email,
+        password: data.password,
+      })
+
+      const accessToken = loginResponse.data.accessToken || loginResponse.data.token
+      const user = loginResponse.data.user
+
+      if (!accessToken || !user) {
+        throw new Error('Login failed after registration')
+      }
+
       login({
-        token: response.data.token,
-        refreshToken: response.data.refreshToken,
-        user: response.data.user,
+        accessToken,
+        refreshToken: loginResponse.data.refreshToken || '',
+        user,
       })
 
       addToast({
-        title: 'Welcome to CareFlow!',
+        title: `Welcome, ${user.firstName} ${user.lastName}!`,
         message: 'Your account has been created successfully.',
         type: 'success',
       })
 
       navigate(ROUTES.DASHBOARD, { replace: true })
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Registration failed. Please try again.'
+    } catch (error: unknown) {
+      let errorMessage = 'Registration failed. Please try again.'
+      let errorTitle = 'Registration failed'
+
+      if (
+        error &&
+        typeof error === 'object' &&
+        'status' in error &&
+        error.status === 429
+      ) {
+        errorTitle = 'Too Many Requests'
+        errorMessage =
+          'You have made too many registration attempts. Please try again later.'
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
       addToast({
-        title: 'Registration failed',
+        title: errorTitle,
         message: errorMessage,
         type: 'error',
       })
@@ -284,7 +309,11 @@ export default function RegisterForm() {
             )}
           />
 
-          <Button className="w-full cursor-pointer" type="submit" disabled={isLoading}>
+          <Button
+            className="w-full cursor-pointer"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

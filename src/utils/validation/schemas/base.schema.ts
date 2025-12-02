@@ -18,7 +18,17 @@ export const passwordSchema = z
         'Password must contain at least one special character'
     )
 
-export const nameSchema = z
+export const firstNameSchema = z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must not exceed 50 characters')
+    .regex(
+        /^[a-zA-Z\s'-]+$/,
+        'Name can only contain letters, spaces, hyphens, and apostrophes'
+    )
+    .trim()
+
+export const lastNameSchema = z
     .string()
     .min(2, 'Name must be at least 2 characters')
     .max(50, 'Name must not exceed 50 characters')
